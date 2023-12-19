@@ -220,7 +220,7 @@ def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, guidance_sc
 
 
 if __name__ == '__main__': 
-    '''
+    # '''
     # ==== Example for inferring a single image ===
     reference_image_path = './examples/TestDreamBooth/FG/01.png'
     bg_image_path = './examples/TestDreamBooth/BG/000000309203_GT.png'
@@ -251,8 +251,8 @@ if __name__ == '__main__':
     vis_image = cv2.hconcat([ref_image, back_image, gen_image])
     
     cv2.imwrite(save_path, vis_image [:,:,::-1])
+    # '''
     '''
-    #'''
     # ==== Example for inferring VITON-HD Test dataset ===
 
     from omegaconf import OmegaConf
@@ -288,7 +288,7 @@ if __name__ == '__main__':
 
         vis_image = cv2.hconcat([ref_image, gt_image, gen_image])
         cv2.imwrite(gen_path, vis_image[:,:,::-1])
-    #'''
+    '''
 
     
 
