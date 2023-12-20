@@ -137,7 +137,7 @@ def get_args_parser(
         val_dataset_str="ImageNet:split=VAL",
         test_dataset_strs=None,
         epochs=10,
-        batch_size=128,
+        batch_size=64,
         num_workers=8,
         epoch_length=1250,
         save_checkpoint_frequency=20,

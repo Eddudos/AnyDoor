@@ -89,7 +89,7 @@ def get_args_parser(
         val_dataset_str="ImageNet:split=VAL",
         nb_knn=[10, 20, 100, 200],
         temperature=0.07,
-        batch_size=256,
+        batch_size=128,
         n_per_class_list=[-1],
         n_tries=1,
     )
@@ -326,7 +326,7 @@ def eval_knn_with_model(
     accuracy_averaging=AccuracyAveraging.MEAN_ACCURACY,
     transform=None,
     gather_on_cpu=False,
-    batch_size=256,
+    batch_size=128,
     num_workers=5,
     n_per_class_list=[-1],
     n_tries=1,

@@ -52,7 +52,7 @@ def vis_sample(item):
     cv2.imwrite('sample_vis.jpg',vis[:,:,::-1])
 
 
-dataloader = DataLoader(dataset, num_workers=8, batch_size=4, shuffle=True)
+dataloader = DataLoader(dataset, num_workers=8, batch_size=1, shuffle=True)
 print('len dataloader: ', len(dataloader))
 for data in dataloader:  
     vis_sample(data) 
