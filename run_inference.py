@@ -30,7 +30,7 @@ model.load_state_dict(load_state_dict(model_ckpt, location='cuda'))
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 
-
+#
 
 def aug_data_mask(image, mask):
     transform = A.Compose([
