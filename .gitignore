@@ -123,6 +123,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+epoch=1-step=8687.ckpt?download=true
 
 # Spyder project settings
 .spyderproject
