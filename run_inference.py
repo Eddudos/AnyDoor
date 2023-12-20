@@ -15,7 +15,7 @@ from omegaconf import OmegaConf
 from PIL import Image
 
 
-save_memory = False
+save_memory = True
 disable_verbosity()
 if save_memory:
     enable_sliced_attention()
@@ -30,7 +30,6 @@ model.load_state_dict(load_state_dict(model_ckpt, location='cuda'))
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 
-#
 
 def aug_data_mask(image, mask):
     transform = A.Compose([
