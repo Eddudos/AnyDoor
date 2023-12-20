@@ -27,7 +27,7 @@ config = OmegaConf.load('./configs/inference.yaml')
 model_ckpt =  config.pretrained_model
 model_config = config.config_file
 
-device = torch.device("cuda")
+device = torch.device("cuda:1")
 model = create_model(model_config ).cpu()
 model.load_state_dict(load_state_dict(model_ckpt, location='cpu'))
 model= torch.nn.DataParallel(model)
