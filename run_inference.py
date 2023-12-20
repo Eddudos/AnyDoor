@@ -15,6 +15,8 @@ from omegaconf import OmegaConf
 from PIL import Image
 
 ##
+
+print("Using", torch.cuda.device_count(), "GPUs!")
 save_memory = True
 disable_verbosity()
 if save_memory:
@@ -28,8 +30,9 @@ model_config = config.config_file
 device = torch.device("cuda")
 model = create_model(model_config ).cpu()
 model.load_state_dict(load_state_dict(model_ckpt, location='cuda'))
-model= torch.nn.DataParallel(model, device_ids=["cpu", "cuda:0", "cuda:1"])
 model.to(device)
+model= torch.nn.DataParallel(model)
+
 ddim_sampler = DDIMSampler(model)
 
 
@@ -202,7 +205,7 @@ def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, guidance_sc
     samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                     shape, cond, verbose=False, eta=eta,
                                                     unconditional_guidance_scale=scale,
-                                                    unconditional_conditioning=un_cond)
+                                                    unconditional_conditioning=un_cond).to(device)
     if save_memory:
         model.low_vram_shift(is_diffusing=False)
 
