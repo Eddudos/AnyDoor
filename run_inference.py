@@ -25,9 +25,11 @@ config = OmegaConf.load('./configs/inference.yaml')
 model_ckpt =  config.pretrained_model
 model_config = config.config_file
 
+device = torch.device("cuda")
 model = create_model(model_config ).cpu()
 model.load_state_dict(load_state_dict(model_ckpt, location='cuda'))
-model = model.cuda()
+model= torch.nn.DataParallel(model)
+model.to(device)
 ddim_sampler = DDIMSampler(model)
 
 
