@@ -63,6 +63,3 @@ Test:
 
   VitonHDTest:
     image_dir: path/TryOn/VitonHD/test/cloth
-
-
-
