@@ -15,7 +15,7 @@ from omegaconf import OmegaConf
 from PIL import Image
 
 ##
-save_memory = True
+save_memory = False
 disable_verbosity()
 if save_memory:
     enable_sliced_attention()
