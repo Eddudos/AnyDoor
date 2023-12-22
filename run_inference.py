@@ -181,7 +181,7 @@ def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, guidance_sc
 
     cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning( clip_input )]}
     un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([torch.zeros((1,3,224,224))] * num_samples)]}
-    shape = (4, H // 8, W // 8)
+    shape = (3, H // 8, W // 8)
 
     if save_memory:
         model.low_vram_shift(is_diffusing=True)
