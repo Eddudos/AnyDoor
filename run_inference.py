@@ -1,4 +1,5 @@
 import cv2
+import time
 import einops
 import numpy as np
 import torch
@@ -8,11 +9,20 @@ from cldm.model import create_model, load_state_dict
 from cldm.ddim_hacked import DDIMSampler
 from cldm.hack import disable_verbosity, enable_sliced_attention
 from datasets.data_utils import * 
+import logging
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
 import albumentations as A
 from omegaconf import OmegaConf
 from PIL import Image
+from pathlib import Path
+
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+    filename='test_log.txt'
+)
 
 ##
 save_memory = False
@@ -147,7 +157,7 @@ def crop_back( pred, tar_image,  extra_sizes, tar_box_yyxx_crop):
     return gen_image
 
 
-def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, guidance_scale = 5.0):
+def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, ddim_steps, guidance_scale = 5.0):
     item = process_pairs(ref_image, ref_mask, tar_image, tar_mask)
     ref = item['ref'] * 255
     tar = item['jpg'] * 127.5 + 127.5
@@ -192,7 +202,7 @@ def inference_single_image(ref_image, ref_mask, tar_image, tar_mask, guidance_sc
     strength = 1  #gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
     guess_mode = False #gr.Checkbox(label='Guess Mode', value=False)
     #detect_resolution = 512  #gr.Slider(label="Segmentation Resolution", minimum=128, maximum=1024, value=512, step=1)
-    ddim_steps = 30 #gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
+    # ddim_steps = 30 #gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
     scale = guidance_scale  #gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
     seed = -1  #gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
     eta = 0.0 #gr.Number(label="eta (DDIM)", value=0.0)
@@ -269,31 +279,60 @@ if __name__ == '__main__':
     test_dir = DConf.Test.VitonHDTest.image_dir
     image_names = os.listdir(test_dir)
     
-    for image_name in image_names:
-        ref_image_path = os.path.join(test_dir, image_name)
-        tar_image_path = ref_image_path.replace('/cloth/', '/image/')
-        ref_mask_path = ref_image_path.replace('/cloth/','/cloth-mask/')
-        tar_mask_path = ref_image_path.replace('/cloth/', '/image-parse-v3/').replace('.jpg','.png')
+    for ddim_number in [1, 5, 10, 20, 30, 40]:
+        for image_name in image_names:
+            ref_image_path = os.path.join(test_dir, image_name)
+            tar_image_path = ref_image_path.replace('/cloth/', '/image/')
+            ref_mask_path = ref_image_path.replace('/cloth/','/cloth-mask/')
+            tar_mask_path = ref_image_path.replace('/cloth/', '/image-parse-v3/').replace('.jpg','.png')
 
-        ref_image = cv2.imread(ref_image_path)
-        ref_image = cv2.cvtColor(ref_image, cv2.COLOR_BGR2RGB)
+            ref_image = cv2.imread(ref_image_path)
+            ref_image = cv2.cvtColor(ref_image, cv2.COLOR_BGR2RGB)
 
-        gt_image = cv2.imread(tar_image_path)
-        gt_image = cv2.cvtColor(gt_image, cv2.COLOR_BGR2RGB)
+            gt_image = cv2.imread(tar_image_path)
+            gt_image = cv2.cvtColor(gt_image, cv2.COLOR_BGR2RGB)
 
-        ref_mask = (cv2.imread(ref_mask_path) > 128).astype(np.uint8)[:,:,0]
+            ref_mask = (cv2.imread(ref_mask_path) > 128).astype(np.uint8)[:,:,0]
 
-        tar_mask = Image.open(tar_mask_path ).convert('P')
-        tar_mask= np.array(tar_mask)
-        tar_mask = tar_mask == 5
+            tar_mask = Image.open(tar_mask_path ).convert('P')
+            tar_mask= np.array(tar_mask)
+            tar_mask = tar_mask == 5
 
-        import time
-        start = time.time()
-        gen_image = inference_single_image(ref_image, ref_mask, gt_image.copy(), tar_mask)
-        print(time.time() - start) 
-        gen_path = os.path.join(save_dir, image_name)
+            
+            start = time.time()
+            gen_image = inference_single_image(ref_image, ref_mask, gt_image.copy(), tar_mask, ddim_number)
+            logging.info(f'DDIM: {ddim_number} ------ {time.time() - start}') 
+            gen_path = os.path.join(save_dir, image_name)
 
-        vis_image = cv2.hconcat([ref_image, gt_image, gen_image])
-        cv2.imwrite(gen_path, vis_image[:,:,::-1])
+            vis_image = cv2.hconcat([ref_image, gt_image, gen_image])
+            Path(f'{save_dir}/{ddim_number}').mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(f'{save_dir}/{ddim_number}/{image_name}', vis_image[:,:,::-1])
     # '''
 
+
+import os
+from random import shuffle
+
+
+folder_to_shuffle = 'cloth'
+folder_to_shuffle_2 = 'cloth-mask'
+
+
+files = [f for f in os.listdir(folder_to_shuffle) if f.endswith('.jpg')]
+
+files_unshaffled = files.copy() 
+shuffle(files)
+
+
+# Rename each file with its new name
+for i, filename_unsh in enumerate(files_unshaffled):
+
+    os.rename(f'{folder_to_shuffle}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
+    os.rename(f'{folder_to_shuffle_2}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
+
+
+
+for i, filename_sh in enumerate(files):
+
+    os.rename(f'{folder_to_shuffle}/{i}', f'{folder_to_shuffle}/{filename_sh}')
+    os.rename(f'{folder_to_shuffle_2}/{i}', f'{folder_to_shuffle}/{filename_sh}')
