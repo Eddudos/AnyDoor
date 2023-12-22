@@ -1,0 +1,6 @@
+--2023-12-22 13:57:36--  https://modelscope.cn/api/v1/models/bdsqlsz/AnyDoor-Pruned/repo?Revision=master
+Resolving modelscope.cn (modelscope.cn)... 39.101.130.40
+Connecting to modelscope.cn (modelscope.cn)|39.101.130.40|:443... connected.
+HTTP request sent, awaiting response... 400 Bad Request
+2023-12-22 13:57:37 ERROR 400: Bad Request.
+
