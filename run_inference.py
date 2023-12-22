@@ -287,7 +287,10 @@ if __name__ == '__main__':
         tar_mask= np.array(tar_mask)
         tar_mask = tar_mask == 5
 
+        import time
+        start = time.time()
         gen_image = inference_single_image(ref_image, ref_mask, gt_image.copy(), tar_mask)
+        print(time.time() - start) 
         gen_path = os.path.join(save_dir, image_name)
 
         vis_image = cv2.hconcat([ref_image, gt_image, gen_image])
