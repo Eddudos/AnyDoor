@@ -301,7 +301,8 @@ if __name__ == '__main__':
             
             start = time.time()
             gen_image = inference_single_image(ref_image, ref_mask, gt_image.copy(), tar_mask, ddim_number)
-            logging.info(f'DDIM: {ddim_number} ------ {time.time() - start}') 
+            logging.info(f'DDIM: {ddim_number} ------ {time.time() - start}')
+            print(f'DDIM: {ddim_number} ------ {time.time() - start}') 
             gen_path = os.path.join(save_dir, image_name)
 
             vis_image = cv2.hconcat([ref_image, gt_image, gen_image])
@@ -310,29 +311,29 @@ if __name__ == '__main__':
     # '''
 
 
-import os
-from random import shuffle
+# import os
+# from random import shuffle
 
 
-folder_to_shuffle = 'cloth'
-folder_to_shuffle_2 = 'cloth-mask'
+# folder_to_shuffle = 'cloth'
+# folder_to_shuffle_2 = 'cloth-mask'
 
 
-files = [f for f in os.listdir(folder_to_shuffle) if f.endswith('.jpg')]
+# files = [f for f in os.listdir(folder_to_shuffle) if f.endswith('.jpg')]
 
-files_unshaffled = files.copy() 
-shuffle(files)
-
-
-# Rename each file with its new name
-for i, filename_unsh in enumerate(files_unshaffled):
-
-    os.rename(f'{folder_to_shuffle}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
-    os.rename(f'{folder_to_shuffle_2}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
+# files_unshaffled = files.copy() 
+# shuffle(files)
 
 
+# # Rename each file with its new name
+# for i, filename_unsh in enumerate(files_unshaffled):
 
-for i, filename_sh in enumerate(files):
+#     os.rename(f'{folder_to_shuffle}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
+#     os.rename(f'{folder_to_shuffle_2}/{filename_unsh}', f'{folder_to_shuffle}/{i}')
 
-    os.rename(f'{folder_to_shuffle}/{i}', f'{folder_to_shuffle}/{filename_sh}')
-    os.rename(f'{folder_to_shuffle_2}/{i}', f'{folder_to_shuffle}/{filename_sh}')
+
+
+# for i, filename_sh in enumerate(files):
+
+#     os.rename(f'{folder_to_shuffle}/{i}', f'{folder_to_shuffle}/{filename_sh}')
+#     os.rename(f'{folder_to_shuffle_2}/{i}', f'{folder_to_shuffle}/{filename_sh}')
