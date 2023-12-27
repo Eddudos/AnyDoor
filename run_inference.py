@@ -57,7 +57,7 @@ def process_pairs(ref_image, ref_mask, tar_image, tar_mask):
     ref_mask = ref_mask[y1:y2,x1:x2]
 
 
-    ratio = np.random.randint(12, 13) / 10
+    ratio = 12 / 10
     masked_ref_image, ref_mask = expand_image_mask(masked_ref_image, ref_mask, ratio=ratio)
     ref_mask_3 = np.stack([ref_mask,ref_mask,ref_mask],-1)
 
